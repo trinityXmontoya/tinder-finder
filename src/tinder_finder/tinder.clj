@@ -14,7 +14,6 @@
    "user-agent" "Tinder/4.1.4 (iPhone; iOS 8.1.3; Scale/2.00)"
    "X-Auth-Token" (env :tinder-token)})
 (def api-url "https://api.gotinder.com")
-(def test-recs (json/decode (env :search-sample) true))
 
 ;  calls
 (defn get-auth-token
