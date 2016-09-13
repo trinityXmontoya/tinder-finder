@@ -19,7 +19,7 @@ Built off the [Unofficial Tinder API documentation gist](https://gist.github.com
  :search-name First name of user you are searching for
  :search-school School of person you are searching for
  :search-bio Bio (full or partial) of person you are searching for
- :search-tags If you are looking to do an image comparison you first get the tags of the *}
+ :search-tags If you are looking to do an image tag comparison you first get the tags of the original photo with Clarifai}
 ```
 
 ### Todo
@@ -27,6 +27,7 @@ Built off the [Unofficial Tinder API documentation gist](https://gist.github.com
 * error handling
 
 ### Shortcomings
+- Built this for my use-case, adjust code as necessary to use different filters than those provided
 - Tinder API can change
 - Using a tool that does true image comparison would provide more accurate results than using just identifiying tags. For my use it was good enough as I had a set of fairly unique search tags and didn't mind filtering through the resulting photos but you can always replace Clarifai with a different API/lib (one SO suggestion explored was [OPENCV](http://docs.opencv.org/2.4/doc/tutorials/introduction/desktop_java/java_dev_intro.html)).
 - Clarifai API has a 5k limit/month
