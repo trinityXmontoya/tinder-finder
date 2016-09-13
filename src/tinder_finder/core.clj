@@ -13,7 +13,8 @@
 ; redis conf
 (def server1-conn {:pool {}
                     :spec {:host "127.0.0.1"
-                           :port 6379}}) ; See `wcar` docstring for opts
+                           :port 6379
+                           :db 4}}) ; See `wcar` docstring for opts
 (defmacro wcar* [& body] `(car/wcar server1-conn ~@body))
 (defn force-serialization [m] (into {} (for [[k v] m] [k (car/freeze v)])))
 (defn hgetall-as-map
@@ -98,17 +99,46 @@
   [id]
   (let [url (str tinder-api-url "/pass/" id)
         opts {:headers tinder-headers}]
-    (http/get url opts)
+    (http/get url opts
+      (fn [{:keys [status headers body err]}]
+        (let [res (json/decode body true)]
+        (if-not (= 200 status)
+          (error "processing response" res)
+          res))))))
+
+; match filter
+(defn query-clarifai
+  [url]
+  (let [api "https://api.clarifai.com/v1/tag/"
+        opts {:headers {"Authorization" (str "Bearer " (env :clarifai-token))}
+              :query-params {:url url}}]
+    (http/get api opts
       (fn [{:keys [status headers body err]}]
         (let [res (json/decode body true)]
         (if-not (= 200 status)
           (error "processing response" (res :error))
-          res)))))
+          res))))))
 
-; match filter
+(defn dups [seq]
+  (for [[id freq] (frequencies seq)  ;; get the frequencies, destructure
+        :when (> freq 1)]            ;; this is the filter condition
+   id))                              ;; just need the id, not the frequency
+
+(defn save-tags
+  [tags]
+  (let [key "tinder-finder:prof-pic-keywords"]
+    (println "saving tags:" tags)
+    (wcar* :as-pipeline
+      (mapv #(car/lpush key %) tags))))
+
 (defn img-match-found?
-  [photos]
-  (map :url photos))
+  [img-url]
+  (let [res (query-clarifai img-url)
+        tags (get-in @res [:results 0 :result :tag :classes])
+        search-tags (read-string (env :search-tags))
+        duplicates (dups (concat tags search-tags))]
+    (save-tags tags)
+    (=  (count search-tags) (count duplicates))))
 
 (defn sort-recs
   [recs]
@@ -118,8 +148,8 @@
     (if (or
            (= (r :name) (env :search-name))
            (contains? (mapv :name (r :schools)) (env :search-school))
-           (boolean (re-find #(env :search-bio) (r :bio)))
-          ;  (img-match-found? (r :photos))
+           (boolean (re-find (re-pattern (env :search-bio)) (r :bio)))
+          ;  (img-match-found? ((first (r :photos)) :url))
            )
       (conj! matches r)
       (do
@@ -130,26 +160,24 @@
 
 (defn save-recs
   []
-  (let [sorted (sort-recs x-recs)]
-        (println "Matches:" (count (sorted :matches))
-                 "Mistmatches:" (count (sorted :mismatches)))
+  (let [sorted (sort-recs x-recs)
+        matches (sorted :matches)
+        mismatches (sorted :mismatches)]
+        (println "Matches:" (count matches)
+                 "Mistmatches:" (count mismatches))
+      (doseq [m mismatches]
+        (let [pass (pass-mismatch m)]
+          (println (@pass :status) ":passed on " m)))
 
-      ; (map #(pass-mismatch %) (sorted :mismatches))
-    ; (wcar* :as-pipeline
-    ;   (mapv (fn [key user] (car/hmset* key user))
-    ;         (mapv mk-user-key matches)
-    ;         (mapv force-serialization matches)))
+      (when (> (count matches) 0)
+        (println "adding matches" (select-keys matches [:name :schools :bio] (get-in matches [:photos 0 :url])))
 
-            ))
+        (wcar* :as-pipeline
+          (mapv (fn [key user] (car/hmset* key user))
+                (mapv mk-user-key matches)
+                (mapv force-serialization matches))))))
 
 (defn -main
   "Get catching"
   []
-  (api-wrap :post
-                     (str tinder-api-url "/auth")
-                     {:headers {"Content-Type" "application/json"
-                                "User-Agent" "Tinder/4.1.4 (iPhone; iOS 8.1.3; Scale/2.00)"}
-                      :body (json/encode {:facebook_token (env :fbook-token)
-                                          :facebook_id (env :fbook-id)})}
-                     "success-fn")
-  ; (save-recs))
+  (save recs))
