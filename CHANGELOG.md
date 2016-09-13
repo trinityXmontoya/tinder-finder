@@ -3,12 +3,14 @@ All notable changes to this project will be documented in this file. This change
 
 ## [Unreleased]
 
-## 0.1.0-SNAPSHOT - 2016-09-13
+## 0.1.0-SNAPSHOT - 2016-09-13/14
 ### Added
 - Tinder API functionality needed to update profile to search (new location, gender, filters (gender, age, distance))
 - Ability to filter through results based off name, bio, or school matches
 - 'Pass' on mismatches so they don't come up in later calls to '/users/recs'
 - Skeleton to write results to Redis for later querying
+- Use [Clarifai](https://clarifai.com/#demo) API to match images to desired search tags
+- Save off all primary photo search tags for further analysis 
 
 
 [Unreleased]: https://github.com/your-name/tinder-finder/compare/0.1.1...HEAD
