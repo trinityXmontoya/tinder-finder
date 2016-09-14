@@ -21,7 +21,7 @@
         opts (merge {:headers headers} opts)
         {:keys [status body error]} @(http/request (merge {:method method :url url} opts))
         body (json/decode body true)]
-    (if (not (= status 200))
+    (if-not (= status 200)
       (throw error)
       body)))
 
