@@ -16,8 +16,7 @@
 (def api-url "https://api.gotinder.com")
 
 ;  calls
-(defn tinder-api-wrap
-  [method path opts]
+(defn tinder-api-wrap [method path opts]
   (let [url (str api-url path)
         opts (merge {:headers headers} opts)
         {:keys [status body error]} @(http/request (merge {:method method :url url} opts))
@@ -26,8 +25,7 @@
       (throw error)
       body)))
 
-(defn set-preferences
-  [gender gender-filter age-min age-max dist-max]
+(defn set-preferences [gender gender-filter age-min age-max dist-max]
   (let [opts {:body (json/encode {:gender gender
                                   :gender-filter gender-filter
                                   :age-filter-min age-min
@@ -35,23 +33,19 @@
                                   :distanct-filter dist-max})}]
     (tinder-api-wrap :post "/profile" opts)))
 
-(defn set-location
-  [lat lng]
+(defn set-location [lat lng]
   (let [opts {:body (json/encode {:lat lat
                                   :lng lng})}]
     (tinder-api-wrap :post "/user/ping" opts)))
 
-(defn get-recs
-  []
+(defn get-recs []
   (let [res (tinder-api-wrap :get "/user/recs" {})]
     (res :results)))
 
-(defn pass-user
-  [id]
+(defn pass-user [id]
   (let [path (str "/pass/" id)]
     (tinder-api-wrap :get path {})))
 
-(defn like-user
-  [id]
+(defn like-user [id]
   (let [path (str "/like/" id)]
     (tinder-api-wrap :get path {})))

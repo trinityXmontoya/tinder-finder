@@ -39,27 +39,26 @@
 
 (defn sort-recs
   "sort recommendations based off provided filters
-   returns {:matches [match1 match2] :pass_ids [pass1 pass2]}"
+   returns {:matches [match1 match2] :pass-id [pass1 pass2]}"
   [recs]
   (let [matches (transient [])
-        pass_ids (transient [])]
+        pass-id (transient [])]
     (mapv (fn [r]
-      (if (or (= (r :name) (env :search-name))
-              (contains? (mapv :name (r :schools)) (env :search-school))
-              (boolean (re-find (re-pattern (env :search-bio)) (r :bio)))
-              (img-match-found? ((first (r :photos)) :url)))
-        (conj! matches r)
-        (do (println "bye," (r :name))
-            (conj! pass_ids (r :_id))))) recs)
-    {:matches (persistent! matches) :pass_ids (persistent! pass_ids)}))
+            (if (or (= (r :name) (env :search-name))
+                    (contains? (mapv :name (r :schools)) (env :search-school))
+                    (boolean (re-find (re-pattern (env :search-bio)) (r :bio)))
+                    (img-match-found? ((first (r :photos)) :url)))
+              (conj! matches r)
+              (do (println "bye," (r :name))
+                  (conj! pass-id (r :_id))))) recs)
+    {:matches (persistent! matches) :pass-id (persistent! pass-id)}))
 
-(defn process-recs
-  []
+(defn process-recs []
   (let [sorted (sort-recs (tinder/get-recs))
         matches (sorted :matches)
-        pass_ids (sorted :pass_ids)]
-    (println "Matches:" (count matches) "Passes:" (count pass_ids))
-    (doseq [id pass_ids]
+        pass-id (sorted :pass-id)]
+    (println "Matches:" (count matches) "Passes:" (count pass-id))
+    (doseq [id pass-id]
       (let [res (tinder/pass-user id)]
         (println (res :status) ":passed on " id)))
     (when (> (count matches) 0)
