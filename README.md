@@ -31,3 +31,8 @@ Built off the [Unofficial Tinder API documentation gist](https://gist.github.com
 - Rate-limiting with Tinder `/recs` call
 - Using a tool that does true image comparison would provide more accurate results than using just identifiying tags. For my use it was good enough as I had a set of fairly unique search tags and didn't mind filtering through the resulting photos but you can always replace Clarifai with a different API/lib (one SO suggestion explored was [OPENCV](http://docs.opencv.org/2.4/doc/tutorials/introduction/desktop_java/java_dev_intro.html)).
 - Clarifai API has a 5k limit/month
+
+
+Copyright © 2016
+
+Distributed under the [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License](https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode).
