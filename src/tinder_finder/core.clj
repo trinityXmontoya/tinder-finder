@@ -60,7 +60,8 @@
     (println "Matches:" (count matches) "Passes:" (count pass-id))
     (doseq [id pass-id]
       (let [res (tinder/pass-user id)]
-        (println (res :status) ":passed on " id)))
+        (println (res :status) ":passed on " id)
+        (Thread/sleep 1000)))
     (when (> (count matches) 0)
       (redis/save-matches matches)
       ; optionally like user so they don't come back in results

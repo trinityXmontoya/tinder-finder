@@ -7,14 +7,16 @@ Search Tinder for a specific person
 Allows you to provide filters (name, gender, age, location, etc) as well as update your own settings (gender, location, etc) to find profiles matching your filters
 
 ### Background
-Built off the [Unofficial Tinder API documentation gist](https://gist.github.com/rtt/10403467) with the intention of helping a friend find someone who was impersonating them on Tinder
+Built off the [Unofficial Tinder API documentation gist](https://gist.github.com/rtt/10403467) with the intention of helping a friend find someone who was impersonating them on Tinder.
+
+You will need Tinder Plus in order to have an unlimited number of swipes, otherwise you can exit after you've run out of likes (~100) and restart 12hrs later.
 
 ### [environ](https://github.com/weavejester/environ) vars
 
 ```language=clojure
 {:fbook-token Facebook auth token (instructions in [gist](https://gist.github.com/rtt/10403467) on how to obtain)
  :fbook-id Accesible in above method but is also the custom id in your facebook url if you added on
- :tinder-token Tinder access token, retrievable with `tinder/get-auth-token` once you have your fbook info set
+ :tinder-token Tinder access token, retrievable with `tinder/get-auth-token` once you have your fbook info set, updated every 24hrs
  :clarifai-token [Clarifai](https://www.clarifai.com/) API token*
  :search-name First name of user you are searching for
  :search-school School of person you are searching for

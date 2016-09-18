@@ -48,4 +48,5 @@
 
 (defn like-user [id]
   (let [path (str "/like/" id)]
-    (tinder-api-wrap :get path {})))
+    (tinder-api-wrap :get path {})
+      (Thread/sleep 1000)))
