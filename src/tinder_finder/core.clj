@@ -49,8 +49,7 @@
                     (boolean (re-find (re-pattern (env :search-bio)) (r :bio)))
                     (img-match-found? ((first (r :photos)) :url)))
               (conj! matches r)
-              (do (println "bye," (r :name))
-                  (conj! pass-id (r :_id))))) recs)
+              (conj! pass-id (r :_id)))) recs)
     {:matches (persistent! matches) :pass-id (persistent! pass-id)}))
 
 (defn process-recs []
@@ -59,9 +58,8 @@
         pass-id (sorted :pass-id)]
     (println "Matches:" (count matches) "Passes:" (count pass-id))
     (doseq [id pass-id]
-      (let [res (tinder/pass-user id)]
-        (println (res :status) ":passed on " id)
-        (Thread/sleep 1000)))
+      (tinder/pass-user id)
+      (Thread/sleep 300))
     (when (> (count matches) 0)
       (redis/save-matches matches)
       ; optionally like user so they don't come back in results

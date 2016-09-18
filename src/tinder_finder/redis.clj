@@ -18,7 +18,6 @@
 
 ; read/write fns
 (defn save-tags [tags]
-  (println "saving tags:" tags)
   (wcar* :as-pipeline
     (mapv (partial car/lpush prof-pic-key) tags)))
 
