@@ -4,7 +4,7 @@ Search Tinder for a specific person
 
 
 ### Use
-Allows you to provide filters (name, gender, age, location, etc) as well as update your own settings (gender, location, etc) to find profiles matching your filters
+Allows you to provide filters (name, gender, age, location, etc) as well as update your own settings (gender, location, etc) to find profiles matching your filters.
 
 ### Background
 Built off the [Unofficial Tinder API documentation gist](https://gist.github.com/rtt/10403467) with the intention of helping a friend find someone who was impersonating them on Tinder.
